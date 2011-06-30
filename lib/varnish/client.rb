@@ -114,6 +114,21 @@ module Varnish
         response
       end
     end
+    
+    def ban(*args)
+      c = 'ban'
+      c << ".#{args.shift}" if [:url, :hash, :list].include?(args.first)
+      response = cmd(c, *args)
+      case c
+      when 'ban.list'
+        response.split("\n").map do |line|
+          a = line.split("\t")
+          [a[0].to_i, a[1]]
+        end
+      else
+        bool response
+      end
+    end
 
     # Purge objects from the cache or show the purge queue.
     #
